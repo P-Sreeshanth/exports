@@ -76,6 +76,7 @@
         
         .sidebar {
             transition: all 0.3s ease;
+            background: #0A0E27 !important;
         }
         
         .sidebar.collapsed {
@@ -85,10 +86,13 @@
         .nav-item {
             transition: all 0.2s ease;
             position: relative;
+            color: #FFFFFF !important;
+            font-weight: 600 !important;
         }
         
         .nav-item.active {
-            color: var(--primary-gold);
+            color: var(--primary-gold) !important;
+            font-weight: 700 !important;
         }
         
         .nav-item.active::before {
@@ -215,11 +219,11 @@
                 <div class="flex items-center gap-2">
                     <div class="w-10 h-10 bg-primary-gold rounded-lg flex items-center justify-center font-poppins font-bold text-dark-charcoal">A</div>
                     <div>
-                        <h1 class="font-poppins font-bold text-sm text-white">Amatya</h1>
-                        <p class="text-xs text-gray-300">Exports</p>
+                        <h1 class="font-poppins font-bold text-sm" style="color: #FFFFFF;">Amatya</h1>
+                        <p class="text-xs" style="color: #CCCCCC;">Exports</p>
                     </div>
                 </div>
-                <button id="toggleSidebar" class="text-gray-300 hover:text-white md:hidden">
+                <button id="toggleSidebar" class="md:hidden" style="color: #CCCCCC;">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
@@ -227,39 +231,39 @@
             </div>
             
             <div id="navItems" class="space-y-2">
-                <button onclick="navigateTo('dashboard')" class="nav-item active w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
+                <button onclick="navigateTo('dashboard')" class="nav-item active w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm" style="color: #DFAF2B;">
                     <span>🏠</span>
                     <span>Dashboard</span>
                 </button>
-                <button onclick="navigateTo('exports')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
+                <button onclick="navigateTo('exports')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm" style="color: #FFFFFF; font-weight: 600;">
                     <span>📤</span>
                     <span>Exports</span>
                 </button>
-                <button onclick="navigateTo('imports')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
+                <button onclick="navigateTo('imports')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm" style="color: #FFFFFF; font-weight: 600;">
                     <span>📥</span>
                     <span>Imports</span>
                 </button>
-                <button onclick="navigateTo('inventory')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
+                <button onclick="navigateTo('inventory')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm" style="color: #FFFFFF; font-weight: 600;">
                     <span>📦</span>
                     <span>Inventory</span>
                 </button>
-                <button onclick="navigateTo('buyers')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
+                <button onclick="navigateTo('buyers')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm" style="color: #FFFFFF; font-weight: 600;">
                     <span>👥</span>
                     <span>Buyers</span>
                 </button>
-                <button onclick="navigateTo('analytics')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
+                <button onclick="navigateTo('analytics')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm" style="color: #FFFFFF; font-weight: 600;">
                     <span>📊</span>
                     <span>Analytics</span>
                 </button>
-                <button onclick="navigateTo('documents')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
+                <button onclick="navigateTo('documents')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm" style="color: #FFFFFF; font-weight: 600;">
                     <span>📄</span>
                     <span>Documents</span>
                 </button>
-                <button onclick="navigateTo('insights')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
+                <button onclick="navigateTo('insights')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm" style="color: #FFFFFF; font-weight: 600;">
                     <span>✨</span>
                     <span>AI Insights</span>
                 </button>
-                <button onclick="navigateTo('settings')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
+                <button onclick="navigateTo('settings')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm" style="color: #FFFFFF; font-weight: 600;">
                     <span>⚙️</span>
                     <span>Settings</span>
                 </button>
