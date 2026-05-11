@@ -22,11 +22,11 @@
     
     <style>
         * {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
         
         .font-poppins {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Segoe UI', 'Poppins', sans-serif;
         }
         
         :root {
@@ -36,29 +36,33 @@
             --emerald-accent: #0F766E;
             --light-gray: #F5F5F5;
             --subtle-gray: #E5E5E5;
-            --text-dark: #1F2937;
-            --text-muted: #6B7280;
+            --text-dark: #000000;
+            --text-muted: #333333;
         }
         
         body {
             background: linear-gradient(135deg, #FFF8E7 0%, #F5F5F5 100%);
-            color: var(--text-dark);
+            color: #000000;
+            font-weight: 500;
+            letter-spacing: 0.3px;
         }
         
         body.dark-mode {
             background: linear-gradient(135deg, #0F172A 0%, #1F2937 100%);
-            color: #E5E7EB;
+            color: #FFFFFF;
         }
         
         .glass-card {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(200, 150, 50, 0.2);
+            color: #000000;
         }
         
         body.dark-mode .glass-card {
-            background: rgba(30, 41, 59, 0.8);
+            background: rgba(30, 41, 59, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
         }
         
         .stat-card {
@@ -211,11 +215,11 @@
                 <div class="flex items-center gap-2">
                     <div class="w-10 h-10 bg-primary-gold rounded-lg flex items-center justify-center font-poppins font-bold text-dark-charcoal">A</div>
                     <div>
-                        <h1 class="font-poppins font-bold text-sm">Amatya</h1>
-                        <p class="text-xs text-gray-400">Exports</p>
+                        <h1 class="font-poppins font-bold text-sm text-white">Amatya</h1>
+                        <p class="text-xs text-gray-300">Exports</p>
                     </div>
                 </div>
-                <button id="toggleSidebar" class="text-gray-400 hover:text-white md:hidden">
+                <button id="toggleSidebar" class="text-gray-300 hover:text-white md:hidden">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
@@ -223,39 +227,39 @@
             </div>
             
             <div id="navItems" class="space-y-2">
-                <button onclick="navigateTo('dashboard')" class="nav-item active w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                <button onclick="navigateTo('dashboard')" class="nav-item active w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
                     <span>🏠</span>
                     <span>Dashboard</span>
                 </button>
-                <button onclick="navigateTo('exports')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                <button onclick="navigateTo('exports')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
                     <span>📤</span>
                     <span>Exports</span>
                 </button>
-                <button onclick="navigateTo('imports')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                <button onclick="navigateTo('imports')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
                     <span>📥</span>
                     <span>Imports</span>
                 </button>
-                <button onclick="navigateTo('inventory')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                <button onclick="navigateTo('inventory')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
                     <span>📦</span>
                     <span>Inventory</span>
                 </button>
-                <button onclick="navigateTo('buyers')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                <button onclick="navigateTo('buyers')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
                     <span>👥</span>
                     <span>Buyers</span>
                 </button>
-                <button onclick="navigateTo('analytics')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                <button onclick="navigateTo('analytics')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
                     <span>📊</span>
                     <span>Analytics</span>
                 </button>
-                <button onclick="navigateTo('documents')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                <button onclick="navigateTo('documents')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
                     <span>📄</span>
                     <span>Documents</span>
                 </button>
-                <button onclick="navigateTo('insights')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                <button onclick="navigateTo('insights')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
                     <span>✨</span>
                     <span>AI Insights</span>
                 </button>
-                <button onclick="navigateTo('settings')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                <button onclick="navigateTo('settings')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm text-white">
                     <span>⚙️</span>
                     <span>Settings</span>
                 </button>
@@ -267,18 +271,18 @@
             <!-- Top Bar -->
             <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-4 flex items-center justify-between">
                 <div>
-                    <h2 id="pageTitle" class="font-poppins font-bold text-2xl text-dark-charcoal">Dashboard</h2>
-                    <p id="pageSubtitle" class="text-sm text-gray-500">Welcome back to your export management system</p>
+                    <h2 id="pageTitle" class="font-poppins font-bold text-2xl text-black">Dashboard</h2>
+                    <p id="pageSubtitle" class="text-sm text-gray-700">Welcome back to your export management system</p>
                 </div>
                 <div class="flex items-center gap-4">
-                    <input type="text" id="globalSearch" placeholder="Search..." class="px-4 py-2 rounded-lg border border-gray-300 text-sm input-focus">
-                    <button onclick="toggleNotifications()" class="relative text-gray-600 hover:text-gray-900">
+                    <input type="text" id="globalSearch" placeholder="Search..." class="px-4 py-2 rounded-lg border border-gray-300 text-sm input-focus text-black placeholder-gray-600">
+                    <button onclick="toggleNotifications()" class="relative text-gray-800 hover:text-gray-900">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                         </svg>
                         <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
                     </button>
-                    <button onclick="toggleDarkMode()" class="text-gray-600 hover:text-gray-900">
+                    <button onclick="toggleDarkMode()" class="text-gray-800 hover:text-gray-900">
                         <svg id="themeIcon" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 3v1m0 16v1m9-9h-1m-16 0H1m15.364 1.636l.707.707M6.343 6.343l-.707-.707m12.728 0l-.707.707m-12.02 12.02l.707.707M19 12a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
@@ -296,12 +300,12 @@
                         <!-- Total Exports -->
                         <div class="glass-card stat-card p-6 rounded-2xl">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-sm font-semibold text-gray-600">Total Exports</h3>
+                                <h3 class="text-sm font-semibold text-gray-800">Total Exports</h3>
                                 <span class="text-2xl">📦</span>
                             </div>
                             <div class="flex items-end justify-between">
                                 <div>
-                                    <p class="counter text-3xl font-bold" data-target="0">0</p>
+                                    <p class="counter text-3xl font-bold text-black" data-target="0">0</p>
                                     <p class="text-sm text-emerald-accent font-semibold">↑ 12% from last month</p>
                                 </div>
                                 <canvas id="chart-exports" class="w-12 h-12"></canvas>
@@ -311,12 +315,12 @@
                         <!-- Monthly Revenue -->
                         <div class="glass-card stat-card p-6 rounded-2xl">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-sm font-semibold text-gray-600">Monthly Revenue</h3>
+                                <h3 class="text-sm font-semibold text-gray-800">Monthly Revenue</h3>
                                 <span class="text-2xl">💰</span>
                             </div>
                             <div class="flex items-end justify-between">
                                 <div>
-                                    <p class="counter text-3xl font-bold" data-target="0">$0</p>
+                                    <p class="counter text-3xl font-bold text-black" data-target="0">$0</p>
                                     <p class="text-sm text-emerald-accent font-semibold">↑ 8.5% from last month</p>
                                 </div>
                                 <canvas id="chart-revenue" class="w-12 h-12"></canvas>
@@ -326,13 +330,13 @@
                         <!-- Pending Shipments -->
                         <div class="glass-card stat-card p-6 rounded-2xl">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-sm font-semibold text-gray-600">Pending Shipments</h3>
+                                <h3 class="text-sm font-semibold text-gray-800">Pending Shipments</h3>
                                 <span class="text-2xl pulse">🚢</span>
                             </div>
                             <div class="flex items-end justify-between">
                                 <div>
-                                    <p class="counter text-3xl font-bold" data-target="0">0</p>
-                                    <p class="text-sm text-orange-500 font-semibold">⚠️ Requires attention</p>
+                                    <p class="counter text-3xl font-bold text-black" data-target="0">0</p>
+                                    <p class="text-sm text-orange-600 font-semibold">⚠️ Requires attention</p>
                                 </div>
                                 <div class="text-right">
                                     <span class="inline-block bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded">3 urgent</span>
@@ -343,13 +347,13 @@
                         <!-- Countries Exported -->
                         <div class="glass-card stat-card p-6 rounded-2xl">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-sm font-semibold text-gray-600">Countries Exported To</h3>
+                                <h3 class="text-sm font-semibold text-gray-800">Countries Exported To</h3>
                                 <span class="text-2xl">🌍</span>
                             </div>
                             <div class="flex items-end justify-between">
                                 <div>
-                                    <p class="counter text-3xl font-bold" data-target="0">0</p>
-                                    <p class="text-sm text-gray-500">Top: UAE, Germany, USA</p>
+                                    <p class="counter text-3xl font-bold text-black" data-target="0">0</p>
+                                    <p class="text-sm text-gray-700">Top: UAE, Germany, USA</p>
                                 </div>
                                 <canvas id="chart-countries" class="w-12 h-12"></canvas>
                             </div>
@@ -358,13 +362,13 @@
                         <!-- Active Buyers -->
                         <div class="glass-card stat-card p-6 rounded-2xl">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-sm font-semibold text-gray-600">Active Buyers</h3>
+                                <h3 class="text-sm font-semibold text-gray-800">Active Buyers</h3>
                                 <span class="text-2xl">👥</span>
                             </div>
                             <div class="flex items-end justify-between">
                                 <div>
-                                    <p class="counter text-3xl font-bold" data-target="0">0</p>
-                                    <p class="text-sm text-gray-500">Avg trust score: 90</p>
+                                    <p class="counter text-3xl font-bold text-black" data-target="0">0</p>
+                                    <p class="text-sm text-gray-700">Avg trust score: 90</p>
                                 </div>
                                 <canvas id="chart-buyers" class="w-12 h-12"></canvas>
                             </div>
@@ -373,13 +377,13 @@
                         <!-- Inventory Stock -->
                         <div class="glass-card stat-card p-6 rounded-2xl">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-sm font-semibold text-gray-600">Inventory Stock</h3>
+                                <h3 class="text-sm font-semibold text-gray-800">Inventory Stock</h3>
                                 <span class="text-2xl">📊</span>
                             </div>
                             <div class="flex items-end justify-between">
                                 <div>
-                                    <p class="counter text-3xl font-bold" data-target="0">0%</p>
-                                    <p class="text-sm text-yellow-600 font-semibold">⚠️ 1 item low</p>
+                                    <p class="counter text-3xl font-bold text-black" data-target="0">0%</p>
+                                    <p class="text-sm text-yellow-700 font-semibold">⚠️ 1 item low</p>
                                 </div>
                                 <div class="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500"></div>
                             </div>
@@ -389,29 +393,29 @@
                     <!-- Recent Activity -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="lg:col-span-2 glass-card p-6 rounded-2xl">
-                            <h3 class="font-semibold text-lg mb-4">Recent Exports</h3>
+                            <h3 class="font-semibold text-lg text-black mb-4">Recent Exports</h3>
                             <div id="recentExports" class="space-y-3">
                                 <div class="skeleton h-12 rounded"></div>
                             </div>
                         </div>
                         <div class="glass-card p-6 rounded-2xl">
-                            <h3 class="font-semibold text-lg mb-4">Quick Stats</h3>
+                            <h3 class="font-semibold text-lg text-black mb-4">Quick Stats</h3>
                             <div class="space-y-4">
                                 <div>
                                     <div class="flex justify-between text-sm mb-1">
-                                        <span>Monthly Target</span>
+                                        <span class="text-black">Monthly Target</span>
                                         <span class="font-semibold text-emerald-accent">75%</span>
                                     </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="w-full bg-gray-300 rounded-full h-2">
                                         <div class="bg-emerald-accent h-2 rounded-full" style="width: 75%"></div>
                                     </div>
                                 </div>
                                 <div>
                                     <div class="flex justify-between text-sm mb-1">
-                                        <span>Profit Margin</span>
+                                        <span class="text-black">Profit Margin</span>
                                         <span class="font-semibold text-blue-600">20.5%</span>
                                     </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="w-full bg-gray-300 rounded-full h-2">
                                         <div class="bg-blue-600 h-2 rounded-full" style="width: 68%"></div>
                                     </div>
                                 </div>
@@ -938,13 +942,13 @@
                 const recentExports = document.getElementById('recentExports');
                 if (recentResult[0]?.values.length > 0) {
                     recentExports.innerHTML = recentResult[0].values.map(row => `
-                        <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
+                        <div class="flex items-center justify-between p-3 hover:bg-gray-200 rounded-lg">
                             <div>
-                                <p class="font-semibold text-sm">${row[4]}</p>
-                                <p class="text-xs text-gray-500">${row[0]}</p>
+                                <p class="font-semibold text-sm text-black">${row[4]}</p>
+                                <p class="text-xs text-gray-700">${row[0]}</p>
                             </div>
                             <div class="text-right">
-                                <p class="font-semibold text-sm">${formatCurrency(row[3])}</p>
+                                <p class="font-semibold text-sm text-black">${formatCurrency(row[3])}</p>
                                 <span class="text-xs px-2 py-1 rounded-full ${row[1] === 'delivered' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${row[1]}</span>
                             </div>
                         </div>
