@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Amatya Exports - Premium Turmeric Export Management System">
+    <title>Amatya Exports - Export Management</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    
+    <!-- SQL.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sql.js@1.8.0/dist/sql-wasm.js"></script>
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .font-poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        :root {
+            --primary-gold: #DFAF2B;
+            --dark-charcoal: #111111;
+            --warm-cream: #FFF8E7;
+            --emerald-accent: #0F766E;
+            --light-gray: #F5F5F5;
+            --subtle-gray: #E5E5E5;
+            --text-dark: #1F2937;
+            --text-muted: #6B7280;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #FFF8E7 0%, #F5F5F5 100%);
+            color: var(--text-dark);
+        }
+        
+        body.dark-mode {
+            background: linear-gradient(135deg, #0F172A 0%, #1F2937 100%);
+            color: #E5E7EB;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        body.dark-mode .glass-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(223, 175, 43, 0.1);
+        }
+        
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar.collapsed {
+            width: 80px;
+        }
+        
+        .nav-item {
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .nav-item.active {
+            color: var(--primary-gold);
+        }
+        
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 24px;
+            background: var(--primary-gold);
+            border-radius: 0 2px 2px 0;
+        }
+        
+        .toast {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .counter {
+            transition: all 0.5s ease;
+        }
+        
+        .skeleton {
+            animation: skeleton-loading 1s linear infinite alternate;
+        }
+        
+        @keyframes skeleton-loading {
+            0% { background-color: hsl(200, 20%, 80%); }
+            100% { background-color: hsl(200, 20%, 95%); }
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.show {
+            display: flex;
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .tab-active {
+            border-bottom: 2px solid var(--primary-gold);
+            color: var(--primary-gold);
+        }
+        
+        .input-focus:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 0 3px rgba(223, 175, 43, 0.1);
+        }
+        
+        .btn-primary {
+            background: var(--primary-gold);
+            color: white;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(223, 175, 43, 0.3);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body class="bg-warm-cream">
+    <div id="app" class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="sidebar w-64 bg-dark-charcoal text-white p-6 overflow-y-auto transition-all">
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 bg-primary-gold rounded-lg flex items-center justify-center font-poppins font-bold text-dark-charcoal">A</div>
+                    <div>
+                        <h1 class="font-poppins font-bold text-sm">Amatya</h1>
+                        <p class="text-xs text-gray-400">Exports</p>
+                    </div>
+                </div>
+                <button id="toggleSidebar" class="text-gray-400 hover:text-white md:hidden">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="navItems" class="space-y-2">
+                <button onclick="navigateTo('dashboard')" class="nav-item active w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                    <span>🏠</span>
+                    <span>Dashboard</span>
+                </button>
+                <button onclick="navigateTo('exports')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                    <span>📤</span>
+                    <span>Exports</span>
+                </button>
+                <button onclick="navigateTo('imports')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                    <span>📥</span>
+                    <span>Imports</span>
+                </button>
+                <button onclick="navigateTo('inventory')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                    <span>📦</span>
+                    <span>Inventory</span>
+                </button>
+                <button onclick="navigateTo('buyers')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                    <span>👥</span>
+                    <span>Buyers</span>
+                </button>
+                <button onclick="navigateTo('analytics')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                    <span>📊</span>
+                    <span>Analytics</span>
+                </button>
+                <button onclick="navigateTo('documents')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                    <span>📄</span>
+                    <span>Documents</span>
+                </button>
+                <button onclick="navigateTo('insights')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                    <span>✨</span>
+                    <span>AI Insights</span>
+                </button>
+                <button onclick="navigateTo('settings')" class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition flex items-center gap-3 text-sm">
+                    <span>⚙️</span>
+                    <span>Settings</span>
+                </button>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Bar -->
+            <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-4 flex items-center justify-between">
+                <div>
+                    <h2 id="pageTitle" class="font-poppins font-bold text-2xl text-dark-charcoal">Dashboard</h2>
+                    <p id="pageSubtitle" class="text-sm text-gray-500">Welcome back to your export management system</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <input type="text" id="globalSearch" placeholder="Search..." class="px-4 py-2 rounded-lg border border-gray-300 text-sm input-focus">
+                    <button onclick="toggleNotifications()" class="relative text-gray-600 hover:text-gray-900">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    <button onclick="toggleDarkMode()" class="text-gray-600 hover:text-gray-900">
+                        <svg id="themeIcon" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 3v1m0 16v1m9-9h-1m-16 0H1m15.364 1.636l.707.707M6.343 6.343l-.707-.707m12.728 0l-.707.707m-12.02 12.02l.707.707M19 12a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
+                    <div class="w-10 h-10 rounded-full bg-primary-gold flex items-center justify-center text-white font-bold cursor-pointer">A</div>
+                </div>
+            </header>
+            
+            <!-- Content Area -->
+            <main id="content" class="flex-1 overflow-y-auto p-8">
+                <!-- Dashboard Page -->
+                <div id="dashboard-page" class="space-y-6">
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Total Exports -->
+                        <div class="glass-card stat-card p-6 rounded-2xl">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-sm font-semibold text-gray-600">Total Exports</h3>
+                                <span class="text-2xl">📦</span>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <div>
+                                    <p class="counter text-3xl font-bold" data-target="0">0</p>
+                                    <p class="text-sm text-emerald-accent font-semibold">↑ 12% from last month</p>
+                                </div>
+                                <canvas id="chart-exports" class="w-12 h-12"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Monthly Revenue -->
+                        <div class="glass-card stat-card p-6 rounded-2xl">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-sm font-semibold text-gray-600">Monthly Revenue</h3>
+                                <span class="text-2xl">💰</span>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <div>
+                                    <p class="counter text-3xl font-bold" data-target="0">$0</p>
+                                    <p class="text-sm text-emerald-accent font-semibold">↑ 8.5% from last month</p>
+                                </div>
+                                <canvas id="chart-revenue" class="w-12 h-12"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Pending Shipments -->
+                        <div class="glass-card stat-card p-6 rounded-2xl">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-sm font-semibold text-gray-600">Pending Shipments</h3>
+                                <span class="text-2xl pulse">🚢</span>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <div>
+                                    <p class="counter text-3xl font-bold" data-target="0">0</p>
+                                    <p class="text-sm text-orange-500 font-semibold">⚠️ Requires attention</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="inline-block bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded">3 urgent</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Countries Exported -->
+                        <div class="glass-card stat-card p-6 rounded-2xl">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-sm font-semibold text-gray-600">Countries Exported To</h3>
+                                <span class="text-2xl">🌍</span>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <div>
+                                    <p class="counter text-3xl font-bold" data-target="0">0</p>
+                                    <p class="text-sm text-gray-500">Top: UAE, Germany, USA</p>
+                                </div>
+                                <canvas id="chart-countries" class="w-12 h-12"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Active Buyers -->
+                        <div class="glass-card stat-card p-6 rounded-2xl">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-sm font-semibold text-gray-600">Active Buyers</h3>
+                                <span class="text-2xl">👥</span>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <div>
+                                    <p class="counter text-3xl font-bold" data-target="0">0</p>
+                                    <p class="text-sm text-gray-500">Avg trust score: 90</p>
+                                </div>
+                                <canvas id="chart-buyers" class="w-12 h-12"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Inventory Stock -->
+                        <div class="glass-card stat-card p-6 rounded-2xl">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-sm font-semibold text-gray-600">Inventory Stock</h3>
+                                <span class="text-2xl">📊</span>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <div>
+                                    <p class="counter text-3xl font-bold" data-target="0">0%</p>
+                                    <p class="text-sm text-yellow-600 font-semibold">⚠️ 1 item low</p>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 glass-card p-6 rounded-2xl">
+                            <h3 class="font-semibold text-lg mb-4">Recent Exports</h3>
+                            <div id="recentExports" class="space-y-3">
+                                <div class="skeleton h-12 rounded"></div>
+                            </div>
+                        </div>
+                        <div class="glass-card p-6 rounded-2xl">
+                            <h3 class="font-semibold text-lg mb-4">Quick Stats</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Monthly Target</span>
+                                        <span class="font-semibold text-emerald-accent">75%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-emerald-accent h-2 rounded-full" style="width: 75%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Profit Margin</span>
+                                        <span class="font-semibold text-blue-600">20.5%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-blue-600 h-2 rounded-full" style="width: 68%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Exports Page -->
+                <div id="exports-page" class="hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <input type="text" id="exportsSearch" placeholder="Search exports..." class="px-4 py-2 rounded-lg border border-gray-300 text-sm input-focus">
+                        </div>
+                        <button onclick="openAddExportModal()" class="btn-primary px-4 py-2 rounded-lg font-semibold">+ Add Export</button>
+                    </div>
+                    
+                    <div class="glass-card p-6 rounded-2xl overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-gray-300">
+                                    <th class="text-left py-3 px-4 font-semibold">Export ID</th>
+                                    <th class="text-left py-3 px-4 font-semibold">Buyer</th>
+                                    <th class="text-left py-3 px-4 font-semibold">Country</th>
+                                    <th class="text-left py-3 px-4 font-semibold">Qty (kg)</th>
+                                    <th class="text-left py-3 px-4 font-semibold">Type</th>
+                                    <th class="text-left py-3 px-4 font-semibold">Status</th>
+                                    <th class="text-left py-3 px-4 font-semibold">Revenue</th>
+                                    <th class="text-left py-3 px-4 font-semibold">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="exportsTable">
+                                <tr class="skeleton h-12"></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Imports Page -->
+                <div id="imports-page" class="hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <div></div>
+                        <button onclick="openAddImportModal()" class="btn-primary px-4 py-2 rounded-lg font-semibold">+ Add Import</button>
+                    </div>
+                    
+                    <div class="glass-card p-6 rounded-2xl overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-gray-300">
+                                    <th class="text-left py-3 px-4 font-semibold">Vendor</th>
+                                    <th class="text-left py-3 px-4 font-semibold">Item Type</th>
+                                    <th class="text-left py-3 px-4 font-semibold">Cost</th>
+                                    <th class="text-left py-3 px-4 font-semibold">ETA</th>
+                                    <th class="text-left py-3 px-4 font-semibold">Customs Status</th>
+                                    <th class="text-left py-3 px-4 font-semibold">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="importsTable">
+                                <tr class="skeleton h-12"></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Inventory Page -->
+                <div id="inventory-page" class="hidden space-y-6">
+                    <div id="inventoryCards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Inventory items will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Buyers Page -->
+                <div id="buyers-page" class="hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <input type="text" id="buyersSearch" placeholder="Search buyers..." class="px-4 py-2 rounded-lg border border-gray-300 text-sm input-focus">
+                        <button onclick="openAddBuyerModal()" class="btn-primary px-4 py-2 rounded-lg font-semibold">+ Add Buyer</button>
+                    </div>
+                    
+                    <div id="buyersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Buyer cards will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Analytics Page -->
+                <div id="analytics-page" class="hidden space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="glass-card p-6 rounded-2xl">
+                            <h3 class="font-semibold text-lg mb-4">Monthly Revenue Trend</h3>
+                            <div class="chart-container">
+                                <canvas id="revenueChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card p-6 rounded-2xl">
+                            <h3 class="font-semibold text-lg mb-4">Export Volume by Country</h3>
+                            <div class="chart-container">
+                                <canvas id="volumeChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card p-6 rounded-2xl">
+                            <h3 class="font-semibold text-lg mb-4">Profit Margin Distribution</h3>
+                            <div class="chart-container">
+                                <canvas id="profitChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card p-6 rounded-2xl">
+                            <h3 class="font-semibold text-lg mb-4">Shipment Status Overview</h3>
+                            <div class="chart-container">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Documents Page -->
+                <div id="documents-page" class="hidden space-y-6">
+                    <div class="glass-card p-6 rounded-2xl border-2 border-dashed border-gray-300">
+                        <div class="text-center py-8">
+                            <p class="text-2xl mb-2">📄</p>
+                            <p class="font-semibold mb-1">Drag and drop documents here</p>
+                            <p class="text-sm text-gray-500 mb-4">or click to browse</p>
+                            <input type="file" id="documentUpload" multiple class="hidden">
+                            <button onclick="document.getElementById('documentUpload').click()" class="btn-primary px-4 py-2 rounded-lg text-sm">Browse Files</button>
+                        </div>
+                    </div>
+                    
+                    <div id="documentsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Documents will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- AI Insights Page -->
+                <div id="insights-page" class="hidden space-y-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold">AI-Powered Insights</h2>
+                        <button onclick="rotateInsights()" class="text-gray-600 hover:text-gray-900">🔄 Refresh</button>
+                    </div>
+                    
+                    <div id="insightsContainer" class="space-y-4">
+                        <!-- Insights will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Settings Page -->
+                <div id="settings-page" class="hidden max-w-2xl">
+                    <div class="space-y-6">
+                        <div class="glass-card p-6 rounded-2xl">
+                            <h3 class="font-semibold text-lg mb-4">Display Settings</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-sm font-medium">Dark Mode</label>
+                                    <button onclick="toggleDarkMode()" class="w-12 h-6 bg-gray-300 rounded-full toggle-btn relative">
+                                        <span class="toggle-indicator block w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5 transition"></span>
+                                    </button>
+                                </div>
+                                
+                                <div>
+                                    <label class="text-sm font-medium block mb-2">Currency</label>
+                                    <select id="currencySelect" onchange="changeCurrency(this.value)" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus">
+                                        <option value="USD">USD ($)</option>
+                                        <option value="EUR">EUR (€)</option>
+                                        <option value="INR">INR (₹)</option>
+                                        <option value="AED">AED (د.إ)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card p-6 rounded-2xl">
+                            <h3 class="font-semibold text-lg mb-4">Notifications</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="notifLowStock" checked class="w-4 h-4 text-primary-gold">
+                                    <label for="notifLowStock" class="ml-2 text-sm">Low stock alerts</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="notifPayment" checked class="w-4 h-4 text-primary-gold">
+                                    <label for="notifPayment" class="ml-2 text-sm">Payment reminders</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="notifShipment" checked class="w-4 h-4 text-primary-gold">
+                                    <label for="notifShipment" class="ml-2 text-sm">Shipment updates</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card p-6 rounded-2xl">
+                            <h3 class="font-semibold text-lg mb-4">Database</h3>
+                            <div class="space-y-2">
+                                <button onclick="exportDatabase()" class="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">Export Database</button>
+                                <button onclick="clearDatabase()" class="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">Clear All Data</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Modals -->
+    <div id="exportModal" class="modal">
+        <div class="modal-content glass-card rounded-2xl w-full max-w-md p-6 mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="exportModalTitle" class="font-semibold text-lg">Add Export</h3>
+                <button onclick="closeExportModal()" class="text-gray-500 hover:text-gray-700">&times;</button>
+            </div>
+            
+            <form id="exportForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Buyer</label>
+                    <select id="exportBuyer" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus" required>
+                        <option value="">Select a buyer</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-1">Quantity (kg)</label>
+                    <input type="number" id="exportQty" placeholder="Enter quantity" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-1">Turmeric Type</label>
+                    <select id="exportType" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus" required>
+                        <option value="">Select type</option>
+                        <option value="Finger">Finger</option>
+                        <option value="Powder">Powder</option>
+                        <option value="Whole">Whole</option>
+                        <option value="Organic">Organic</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-1">Shipment Date</label>
+                    <input type="date" id="exportDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-1">Port</label>
+                    <select id="exportPort" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus" required>
+                        <option value="">Select port</option>
+                        <option value="JNPT Mumbai">JNPT Mumbai</option>
+                        <option value="Chennai Port">Chennai Port</option>
+                        <option value="Cochin Port">Cochin Port</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-1">Revenue ($)</label>
+                    <input type="number" id="exportRevenue" placeholder="Enter revenue" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus" required>
+                </div>
+                
+                <div class="flex gap-2 pt-4">
+                    <button type="submit" class="flex-1 btn-primary px-4 py-2 rounded-lg font-semibold">Save</button>
+                    <button type="button" onclick="closeExportModal()" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg font-semibold">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 space-y-2 z-40"></div>
+
+    <script>
+        // ============================================
+        // 1. INITIALIZATION & SETUP
+        // ============================================
+        const APP_NAME = "Amatya Exports";
+        const APP_VERSION = "1.0.0";
+        const CURRENCY_SYMBOLS = { USD: '$', EUR: '€', INR: '₹', AED: 'د.إ' };
+        
+        let app = {
+            db: null,
+            currentPage: 'dashboard',
+            darkMode: localStorage.getItem('darkMode') === 'true',
+            currency: localStorage.getItem('currency') || 'USD',
+            charts: {}
+        };
+        
+        // ============================================
+        // 2. DATABASE SETUP
+        // ============================================
+        async function initDB() {
+            try {
+                const SQL = await initSqlJs();
+                app.db = new SQL.Database();
+                
+                // Create tables
+                app.db.run(`
+                    CREATE TABLE IF NOT EXISTS exports (
+                        id TEXT PRIMARY KEY,
+                        buyerId TEXT NOT NULL,
+                        quantity REAL NOT NULL,
+                        turmericType TEXT NOT NULL,
+                        shipmentDate TEXT NOT NULL,
+                        port TEXT NOT NULL,
+                        containerStatus TEXT DEFAULT 'pending',
+                        paymentStatus TEXT DEFAULT 'pending',
+                        profitMargin REAL DEFAULT 0,
+                        revenue REAL NOT NULL,
+                        createdAt TEXT NOT NULL,
+                        updatedAt TEXT NOT NULL
+                    );
+                    
+                    CREATE TABLE IF NOT EXISTS imports (
+                        id TEXT PRIMARY KEY,
+                        vendorName TEXT NOT NULL,
+                        itemType TEXT NOT NULL,
+                        importCost REAL NOT NULL,
+                        eta TEXT NOT NULL,
+                        shipmentTracking TEXT,
+                        customsStatus TEXT DEFAULT 'pending',
+                        createdAt TEXT NOT NULL,
+                        updatedAt TEXT NOT NULL
+                    );
+                    
+                    CREATE TABLE IF NOT EXISTS inventory (
+                        id TEXT PRIMARY KEY,
+                        itemName TEXT NOT NULL,
+                        quantity REAL NOT NULL,
+                        unit TEXT DEFAULT 'kg',
+                        warehouseLocation TEXT,
+                        lastRestocked TEXT,
+                        reorderLevel REAL DEFAULT 100,
+                        createdAt TEXT NOT NULL,
+                        updatedAt TEXT NOT NULL
+                    );
+                    
+                    CREATE TABLE IF NOT EXISTS buyers (
+                        id TEXT PRIMARY KEY,
+                        companyName TEXT NOT NULL,
+                        country TEXT NOT NULL,
+                        contactPerson TEXT,
+                        email TEXT,
+                        phone TEXT,
+                        totalOrders INTEGER DEFAULT 0,
+                        totalRevenue REAL DEFAULT 0,
+                        trustScore REAL DEFAULT 85,
+                        createdAt TEXT NOT NULL,
+                        updatedAt TEXT NOT NULL
+                    );
+                    
+                    CREATE TABLE IF NOT EXISTS documents (
+                        id TEXT PRIMARY KEY,
+                        fileName TEXT NOT NULL,
+                        fileType TEXT NOT NULL,
+                        documentType TEXT NOT NULL,
+                        createdAt TEXT NOT NULL
+                    );
+                `);
+                
+                // Load sample data
+                await loadSampleData();
+                console.log('Database initialized successfully');
+            } catch (error) {
+                console.error('Database init error:', error);
+            }
+        }
+        
+        async function loadSampleData() {
+            try {
+                // Check if data already exists
+                const result = app.db.exec("SELECT COUNT(*) as count FROM buyers");
+                if (result.length > 0 && result[0].values[0][0] > 0) {
+                    return; // Data already loaded
+                }
+                
+                // Load buyers
+                const buyers = [
+                    { id: 'buyer-001', companyName: 'Al Reef Trading', country: '🇦🇪 UAE', contactPerson: 'Ahmed Al-Mansouri', email: 'ahmed@alreef.ae', phone: '+971-4-xxx-xxxx', totalOrders: 24, totalRevenue: 450000, trustScore: 95 },
+                    { id: 'buyer-002', companyName: 'Berlin Spice AG', country: '🇩🇪 Germany', contactPerson: 'Hans Mueller', email: 'hans@berlinspice.de', phone: '+49-30-xxx-xxxx', totalOrders: 18, totalRevenue: 380000, trustScore: 92 },
+                    { id: 'buyer-003', companyName: 'American Imports Inc', country: '🇺🇸 USA', contactPerson: 'John Smith', email: 'john@americanimports.com', phone: '+1-212-xxx-xxxx', totalOrders: 15, totalRevenue: 320000, trustScore: 88 },
+                    { id: 'buyer-004', companyName: 'Singapore Trade Co.', country: '🇸🇬 Singapore', contactPerson: 'Chen Wei', email: 'chen@singtrade.sg', phone: '+65-6xxx-xxxx', totalOrders: 12, totalRevenue: 290000, trustScore: 90 },
+                    { id: 'buyer-005', companyName: 'UK Flavours Ltd', country: '🇬🇧 UK', contactPerson: 'Elizabeth Brown', email: 'elizabeth@ukflavours.uk', phone: '+44-20-xxxx-xxxx', totalOrders: 10, totalRevenue: 210000, trustScore: 85 }
+                ];
+                
+                for (const buyer of buyers) {
+                    const now = new Date().toISOString();
+                    app.db.run(`INSERT INTO buyers VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                        [buyer.id, buyer.companyName, buyer.country, buyer.contactPerson, buyer.email, buyer.phone, buyer.totalOrders, buyer.totalRevenue, buyer.trustScore, now, now]);
+                }
+                
+                // Load exports
+                const exports = [
+                    { id: 'EXP-2024-001', buyerId: 'buyer-001', quantity: 5000, turmericType: 'Powder', shipmentDate: '2024-05-01', port: 'JNPT Mumbai', status: 'delivered', payment: 'completed', profit: 18.5, revenue: 85000 },
+                    { id: 'EXP-2024-002', buyerId: 'buyer-002', quantity: 3500, turmericType: 'Finger', shipmentDate: '2024-05-05', port: 'Chennai Port', status: 'in-transit', payment: 'partial', profit: 22.3, revenue: 78000 },
+                    { id: 'EXP-2024-003', buyerId: 'buyer-003', quantity: 4200, turmericType: 'Whole', shipmentDate: '2024-05-08', port: 'JNPT Mumbai', status: 'pending', payment: 'pending', profit: 20.1, revenue: 92000 },
+                    { id: 'EXP-2024-004', buyerId: 'buyer-004', quantity: 2800, turmericType: 'Powder', shipmentDate: '2024-05-10', port: 'Cochin Port', status: 'in-transit', payment: 'completed', profit: 19.2, revenue: 68000 },
+                    { id: 'EXP-2024-005', buyerId: 'buyer-005', quantity: 6000, turmericType: 'Organic', shipmentDate: '2024-05-12', port: 'Chennai Port', status: 'pending', payment: 'pending', profit: 25.8, revenue: 150000 }
+                ];
+                
+                for (const exp of exports) {
+                    const now = new Date().toISOString();
+                    app.db.run(`INSERT INTO exports VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                        [exp.id, exp.buyerId, exp.quantity, exp.turmericType, exp.shipmentDate, exp.port, exp.status, exp.payment, exp.profit, exp.revenue, now, now]);
+                }
+                
+                // Load inventory
+                const inventory = [
+                    { id: 'inv-001', itemName: 'Raw Turmeric', quantity: 25000, warehouse: 'Warehouse A', level: 200 },
+                    { id: 'inv-002', itemName: 'Processed Turmeric', quantity: 18000, warehouse: 'Warehouse B', level: 150 },
+                    { id: 'inv-003', itemName: 'Turmeric Powder', quantity: 12000, warehouse: 'Warehouse C', level: 100 },
+                    { id: 'inv-004', itemName: 'Organic Turmeric', quantity: 8500, warehouse: 'Warehouse A', level: 125 },
+                    { id: 'inv-005', itemName: 'Finger Turmeric', quantity: 6200, warehouse: 'Warehouse B', level: 80 }
+                ];
+                
+                for (const item of inventory) {
+                    const now = new Date().toISOString();
+                    app.db.run(`INSERT INTO inventory VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                        [item.id, item.itemName, item.quantity, 'kg', item.warehouse, now, item.level, now, now]);
+                }
+                
+                console.log('Sample data loaded');
+            } catch (error) {
+                console.error('Error loading sample data:', error);
+            }
+        }
+        
+        // ============================================
+        // 3. UI STATE MANAGEMENT & HANDLERS
+        // ============================================
+        function navigateTo(page) {
+            // Hide all pages
+            document.querySelectorAll('[id$="-page"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById(page + '-page').classList.remove('hidden');
+            
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.target.closest('.nav-item').classList.add('active');
+            
+            // Update page title
+            const titles = {
+                dashboard: 'Dashboard',
+                exports: 'Export Management',
+                imports: 'Import Management',
+                inventory: 'Inventory System',
+                buyers: 'Buyers & Clients',
+                analytics: 'Global Analytics',
+                documents: 'Document Management',
+                insights: 'AI Insights',
+                settings: 'Settings'
+            };
+            
+            document.getElementById('pageTitle').textContent = titles[page] || 'Dashboard';
+            app.currentPage = page;
+            
+            // Load page-specific data
+            if (page === 'dashboard') {
+                setTimeout(() => renderDashboard(), 100);
+            } else if (page === 'exports') {
+                renderExports();
+            } else if (page === 'imports') {
+                renderImports();
+            } else if (page === 'inventory') {
+                renderInventory();
+            } else if (page === 'buyers') {
+                renderBuyers();
+            } else if (page === 'analytics') {
+                setTimeout(() => renderAnalytics(), 100);
+            } else if (page === 'insights') {
+                renderInsights();
+            }
+        }
+        
+        function toggleDarkMode() {
+            app.darkMode = !app.darkMode;
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', app.darkMode);
+        }
+        
+        function changeCurrency(currency) {
+            app.currency = currency;
+            localStorage.setItem('currency', currency);
+            renderDashboard();
+        }
+        
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500',
+                warning: 'bg-yellow-500'
+            };
+            
+            toast.className = `toast ${colors[type] || colors.success} text-white px-4 py-3 rounded-lg shadow-lg`;
+            toast.textContent = message;
+            
+            const container = document.getElementById('toastContainer');
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+        
+        // ============================================
+        // 4. DASHBOARD RENDERING
+        // ============================================
+        function renderDashboard() {
+            try {
+                // Get stats
+                const exportStats = app.db.exec("SELECT COUNT(*) as count, SUM(revenue) as revenue, COUNT(CASE WHEN containerStatus='pending' THEN 1 END) as pending FROM exports");
+                const buyerStats = app.db.exec("SELECT COUNT(*) as count FROM buyers");
+                
+                const exportCount = exportStats[0]?.values[0][0] || 0;
+                const totalRevenue = exportStats[0]?.values[0][1] || 0;
+                const pendingCount = exportStats[0]?.values[0][2] || 0;
+                const buyerCount = buyerStats[0]?.values[0][0] || 0;
+                
+                // Update counters with animation
+                animateCounter(document.querySelector('[data-target="0"]'), exportCount);
+                
+                // Render recent exports
+                const recentResult = app.db.exec(`
+                    SELECT e.id, e.containerStatus, e.paymentStatus, e.revenue, b.companyName 
+                    FROM exports e 
+                    JOIN buyers b ON e.buyerId = b.id 
+                    LIMIT 5
+                `);
+                
+                const recentExports = document.getElementById('recentExports');
+                if (recentResult[0]?.values.length > 0) {
+                    recentExports.innerHTML = recentResult[0].values.map(row => `
+                        <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
+                            <div>
+                                <p class="font-semibold text-sm">${row[4]}</p>
+                                <p class="text-xs text-gray-500">${row[0]}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-semibold text-sm">${formatCurrency(row[3])}</p>
+                                <span class="text-xs px-2 py-1 rounded-full ${row[1] === 'delivered' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${row[1]}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Dashboard render error:', error);
+            }
+        }
+        
+        function animateCounter(element, target) {
+            if (!element) return;
+            let current = 0;
+            const increment = target / 100;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target.toString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toString();
+                }
+            }, 20);
+        }
+        
+        // ============================================
+        // 5. EXPORTS RENDERING
+        // ============================================
+        function renderExports() {
+            try {
+                const result = app.db.exec(`
+                    SELECT e.id, b.companyName, b.country, e.quantity, e.turmericType, e.containerStatus, e.revenue 
+                    FROM exports e 
+                    JOIN buyers b ON e.buyerId = b.id
+                    ORDER BY e.createdAt DESC
+                `);
+                
+                const tbody = document.getElementById('exportsTable');
+                if (result[0]?.values.length > 0) {
+                    tbody.innerHTML = result[0].values.map(row => `
+                        <tr class="hover:bg-gray-50 border-b">
+                            <td class="py-3 px-4 font-semibold text-sm">${row[0]}</td>
+                            <td class="py-3 px-4">${row[1]}</td>
+                            <td class="py-3 px-4">${row[2]}</td>
+                            <td class="py-3 px-4">${row[3].toLocaleString()}</td>
+                            <td class="py-3 px-4"><span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">${row[4]}</span></td>
+                            <td class="py-3 px-4">
+                                <span class="px-2 py-1 rounded text-xs ${row[5] === 'delivered' ? 'bg-green-100 text-green-800' : row[5] === 'in-transit' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'}">${row[5]}</span>
+                            </td>
+                            <td class="py-3 px-4 font-semibold">${formatCurrency(row[6])}</td>
+                            <td class="py-3 px-4 space-x-2">
+                                <button onclick="editExport('${row[0]}')" class="text-blue-600 hover:text-blue-900 text-sm">Edit</button>
+                                <button onclick="deleteExport('${row[0]}')" class="text-red-600 hover:text-red-900 text-sm">Delete</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                    
+                    // Populate buyer select
+                    const buyerResult = app.db.exec("SELECT id, companyName FROM buyers");
+                    const buyerSelect = document.getElementById('exportBuyer');
+                    buyerSelect.innerHTML = '<option value="">Select a buyer</option>' + buyerResult[0].values.map(row => `<option value="${row[0]}">${row[1]}</option>`).join('');
+                }
+            } catch (error) {
+                console.error('Exports render error:', error);
+            }
+        }
+        
+        function openAddExportModal() {
+            document.getElementById('exportModalTitle').textContent = 'Add Export';
+            document.getElementById('exportForm').reset();
+            document.getElementById('exportForm').dataset.id = '';
+            document.getElementById('exportModal').classList.add('show');
+        }
+        
+        function closeExportModal() {
+            document.getElementById('exportModal').classList.remove('show');
+        }
+        
+        document.getElementById('exportForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const buyer = document.getElementById('exportBuyer').value;
+            const qty = parseFloat(document.getElementById('exportQty').value);
+            const type = document.getElementById('exportType').value;
+            const date = document.getElementById('exportDate').value;
+            const port = document.getElementById('exportPort').value;
+            const revenue = parseFloat(document.getElementById('exportRevenue').value);
+            
+            const id = document.getElementById('exportForm').dataset.id || 'EXP-' + Date.now();
+            const now = new Date().toISOString();
+            
+            try {
+                if (document.getElementById('exportForm').dataset.id) {
+                    app.db.run(`UPDATE exports SET buyerId=?, quantity=?, turmericType=?, shipmentDate=?, port=?, revenue=?, updatedAt=? WHERE id=?`,
+                        [buyer, qty, type, date, port, revenue, now, id]);
+                    showToast('Export updated successfully', 'success');
+                } else {
+                    app.db.run(`INSERT INTO exports (id, buyerId, quantity, turmericType, shipmentDate, port, containerStatus, paymentStatus, profitMargin, revenue, createdAt, updatedAt)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                        [id, buyer, qty, type, date, port, 'pending', 'pending', 0, revenue, now, now]);
+                    showToast('Export added successfully', 'success');
+                }
+                
+                closeExportModal();
+                renderExports();
+                renderDashboard();
+            } catch (error) {
+                showToast('Error saving export: ' + error.message, 'error');
+            }
+        });
+        
+        function deleteExport(id) {
+            if (confirm('Are you sure you want to delete this export?')) {
+                try {
+                    app.db.run('DELETE FROM exports WHERE id=?', [id]);
+                    showToast('Export deleted successfully', 'success');
+                    renderExports();
+                    renderDashboard();
+                } catch (error) {
+                    showToast('Error deleting export', 'error');
+                }
+            }
+        }
+        
+        // ============================================
+        // 6. IMPORTS RENDERING
+        // ============================================
+        function renderImports() {
+            try {
+                const result = app.db.exec(`
+                    SELECT id, vendorName, itemType, importCost, eta, customsStatus
+                    FROM imports
+                    ORDER BY createdAt DESC
+                `);
+                
+                const tbody = document.getElementById('importsTable');
+                if (result[0]?.values.length > 0) {
+                    tbody.innerHTML = result[0].values.map(row => `
+                        <tr class="hover:bg-gray-50 border-b">
+                            <td class="py-3 px-4 font-semibold">${row[1]}</td>
+                            <td class="py-3 px-4">${row[2]}</td>
+                            <td class="py-3 px-4 font-semibold">${formatCurrency(row[3])}</td>
+                            <td class="py-3 px-4">${new Date(row[4]).toLocaleDateString()}</td>
+                            <td class="py-3 px-4">
+                                <span class="px-2 py-1 rounded text-xs ${row[5] === 'cleared' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${row[5]}</span>
+                            </td>
+                            <td class="py-3 px-4 space-x-2">
+                                <button onclick="deleteImport('${row[0]}')" class="text-red-600 hover:text-red-900 text-sm">Delete</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="py-4 text-center text-gray-500">No imports yet</td></tr>';
+                }
+            } catch (error) {
+                console.error('Imports render error:', error);
+            }
+        }
+        
+        function openAddImportModal() {
+            alert('Add Import modal would appear here');
+        }
+        
+        function deleteImport(id) {
+            if (confirm('Delete this import?')) {
+                try {
+                    app.db.run('DELETE FROM imports WHERE id=?', [id]);
+                    showToast('Import deleted', 'success');
+                    renderImports();
+                } catch (error) {
+                    showToast('Error deleting import', 'error');
+                }
+            }
+        }
+        
+        // ============================================
+        // 7. INVENTORY RENDERING
+        // ============================================
+        function renderInventory() {
+            try {
+                const result = app.db.exec(`SELECT id, itemName, quantity, warehouseLocation, reorderLevel FROM inventory`);
+                
+                const container = document.getElementById('inventoryCards');
+                if (result[0]?.values.length > 0) {
+                    container.innerHTML = result[0].values.map(row => {
+                        const percentage = Math.min((row[2] / row[4]) * 100, 100);
+                        const status = row[2] < row[4] ? 'critical' : row[2] < row[4] * 1.5 ? 'warning' : 'normal';
+                        
+                        return `
+                            <div class="glass-card p-6 rounded-2xl">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h3 class="font-semibold">${row[1]}</h3>
+                                    <span class="text-xs px-2 py-1 rounded ${status === 'critical' ? 'bg-red-100 text-red-800' : status === 'warning' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}">${status}</span>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>${row[2].toLocaleString()} kg</span>
+                                        <span class="text-gray-500">${Math.round(percentage)}%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="h-2 rounded-full transition ${status === 'critical' ? 'bg-red-500' : status === 'warning' ? 'bg-yellow-500' : 'bg-emerald-accent'}" style="width: ${percentage}%"></div>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-500">${row[3]}</p>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch (error) {
+                console.error('Inventory render error:', error);
+            }
+        }
+        
+        // ============================================
+        // 8. BUYERS RENDERING
+        // ============================================
+        function renderBuyers() {
+            try {
+                const result = app.db.exec(`SELECT id, companyName, country, contactPerson, email, phone, totalOrders, totalRevenue, trustScore FROM buyers`);
+                
+                const container = document.getElementById('buyersGrid');
+                if (result[0]?.values.length > 0) {
+                    container.innerHTML = result[0].values.map(row => `
+                        <div class="glass-card p-6 rounded-2xl">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <h3 class="font-semibold text-lg">${row[1]}</h3>
+                                    <p class="text-sm text-gray-500">${row[2]}</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-full bg-primary-gold flex items-center justify-center text-white font-bold text-sm">${row[1].charAt(0)}</div>
+                            </div>
+                            
+                            <div class="space-y-2 mb-4 text-sm">
+                                <p><span class="text-gray-500">Contact:</span> ${row[3]}</p>
+                                <p><a href="mailto:${row[4]}" class="text-primary-gold hover:underline">${row[4]}</a></p>
+                                <p>${row[5]}</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-3 gap-2 mb-4 py-3 border-t border-b">
+                                <div class="text-center">
+                                    <p class="font-bold">${row[6]}</p>
+                                    <p class="text-xs text-gray-500">Orders</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="font-bold">${formatCurrency(row[7])}</p>
+                                    <p class="text-xs text-gray-500">Revenue</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="font-bold text-primary-gold">${row[8]}</p>
+                                    <p class="text-xs text-gray-500">Trust</p>
+                                </div>
+                            </div>
+                            
+                            <button onclick="deleteBuyer('${row[0]}')" class="w-full text-sm text-red-600 hover:text-red-900 font-semibold">Delete</button>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Buyers render error:', error);
+            }
+        }
+        
+        function openAddBuyerModal() {
+            alert('Add Buyer modal would appear here');
+        }
+        
+        function deleteBuyer(id) {
+            if (confirm('Delete this buyer?')) {
+                try {
+                    app.db.run('DELETE FROM buyers WHERE id=?', [id]);
+                    showToast('Buyer deleted', 'success');
+                    renderBuyers();
+                } catch (error) {
+                    showToast('Error deleting buyer', 'error');
+                }
+            }
+        }
+        
+        // ============================================
+        // 9. ANALYTICS RENDERING
+        // ============================================
+        function renderAnalytics() {
+            try {
+                const exportResult = app.db.exec(`SELECT shipmentDate, revenue FROM exports ORDER BY shipmentDate`);
+                const countryResult = app.db.exec(`SELECT b.country, SUM(e.quantity) as qty FROM exports e JOIN buyers b ON e.buyerId = b.id GROUP BY b.country ORDER BY qty DESC LIMIT 8`);
+                
+                // Revenue Chart
+                if (app.charts.revenue) app.charts.revenue.destroy();
+                const revenueCtx = document.getElementById('revenueChart');
+                if (revenueCtx) {
+                    app.charts.revenue = new Chart(revenueCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                            datasets: [{
+                                label: 'Revenue',
+                                data: [80000, 85000, 90000, 95000, 100000, 120000],
+                                borderColor: '#DFAF2B',
+                                backgroundColor: 'rgba(223, 175, 43, 0.1)',
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                }
+                
+                // Volume Chart
+                if (app.charts.volume) app.charts.volume.destroy();
+                const volumeCtx = document.getElementById('volumeChart');
+                if (volumeCtx && countryResult[0]?.values.length) {
+                    app.charts.volume = new Chart(volumeCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: countryResult[0].values.map(row => row[0]),
+                            datasets: [{
+                                label: 'Export Volume (kg)',
+                                data: countryResult[0].values.map(row => row[1]),
+                                backgroundColor: '#0F766E'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                }
+                
+                // Profit Chart
+                if (app.charts.profit) app.charts.profit.destroy();
+                const profitCtx = document.getElementById('profitChart');
+                if (profitCtx) {
+                    app.charts.profit = new Chart(profitCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Finger', 'Powder', 'Whole', 'Organic'],
+                            datasets: [{
+                                data: [18.5, 22.3, 20.1, 25.8],
+                                backgroundColor: ['#DFAF2B', '#0F766E', '#FFA500', '#FF6B6B']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { position: 'bottom' } }
+                        }
+                    });
+                }
+                
+                // Status Chart
+                if (app.charts.status) app.charts.status.destroy();
+                const statusCtx = document.getElementById('statusChart');
+                if (statusCtx) {
+                    app.charts.status = new Chart(statusCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Pending', 'In Transit', 'Delivered'],
+                            datasets: [{
+                                data: [2, 2, 1],
+                                backgroundColor: ['#FFA500', '#4B5563', '#0F766E']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { position: 'bottom' } }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Analytics render error:', error);
+            }
+        }
+        
+        // ============================================
+        // 10. AI INSIGHTS RENDERING
+        // ============================================
+        function renderInsights() {
+            const insights = [
+                { emoji: '🇩🇪', text: 'Germany demand increased 18% this month. Consider increasing exports.' },
+                { emoji: '⏰', text: 'Raw turmeric stock may deplete in 12 days. Reorder recommended.' },
+                { emoji: '📈', text: 'Profit margins highest in UAE exports (22.5%). Focus on UAE market.' },
+                { emoji: '🌱', text: 'Organic turmeric trending 35% higher in Europe. Stock up.' },
+                { emoji: '💰', text: 'Your best buyer: Al Reef Trading. Next order expected in 3 days.' },
+                { emoji: '🚀', text: 'Shipment delay alert: Container #CNT-2024-089 delayed by 2 days.' }
+            ];
+            
+            const container = document.getElementById('insightsContainer');
+            container.innerHTML = insights.map(insight => `
+                <div class="glass-card p-6 rounded-2xl border-l-4 border-primary-gold">
+                    <div class="flex items-start gap-4">
+                        <span class="text-3xl">${insight.emoji}</span>
+                        <div class="flex-1">
+                            <p class="text-sm">${insight.text}</p>
+                            <p class="text-xs text-gray-500 mt-2">2 minutes ago</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function rotateInsights() {
+            renderInsights();
+        }
+        
+        // ============================================
+        // 11. UTILITIES
+        // ============================================
+        function formatCurrency(amount) {
+            const symbol = CURRENCY_SYMBOLS[app.currency];
+            return symbol + amount.toLocaleString('en-US', { maximumFractionDigits: 0 });
+        }
+        
+        function checkDatabaseState() {
+            try {
+                const result = app.db.exec("SELECT COUNT(*) as count FROM exports");
+                console.log('Database state - Exports:', result[0]?.values[0][0]);
+            } catch (error) {
+                console.error('Database check error:', error);
+            }
+        }
+        
+        function exportDatabase() {
+            try {
+                const data = app.db.export();
+                const blob = new Blob([data], { type: 'application/octet-stream' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'amatya-exports.db';
+                a.click();
+                showToast('Database exported successfully', 'success');
+            } catch (error) {
+                showToast('Error exporting database', 'error');
+            }
+        }
+        
+        function clearDatabase() {
+            if (confirm('Are you sure? This will delete all data!')) {
+                try {
+                    app.db.run('DELETE FROM exports; DELETE FROM imports; DELETE FROM inventory; DELETE FROM buyers; DELETE FROM documents;');
+                    showToast('Database cleared', 'success');
+                    location.reload();
+                } catch (error) {
+                    showToast('Error clearing database', 'error');
+                }
+            }
+        }
+        
+        // ============================================
+        // 12. INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initDB();
+            if (app.darkMode) {
+                document.body.classList.toggle('dark-mode');
+            }
+            renderDashboard();
+        });
+    </script>
+</body>
+</html>

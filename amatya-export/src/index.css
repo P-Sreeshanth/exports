@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-turmeric-light: #FACA4B;
+  --color-turmeric: #E6A400;
+  --color-turmeric-dark: #B38000;
+  --color-brown-light: #5A4314;
+  --color-brown: #3A2A0A;
+  --color-brown-dark: #1A1305;
+  --color-cream: #FFF6D6;
+
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Outfit', sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-cream text-brown font-sans;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display tracking-tight text-brown-dark;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-turmeric text-brown-dark font-bold py-3 px-6 rounded-md shadow-md border-b-4 border-turmeric-dark hover:bg-turmeric-light hover:-translate-y-[2px] active:translate-y-[2px] active:border-b-0 transition-all duration-200;
+  }
+
+  .btn-outline {
+    @apply bg-transparent border-2 border-brown text-brown font-bold py-3 px-6 rounded-md hover:bg-brown hover:text-white transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-lg border border-cream overflow-hidden hover:shadow-xl transition-shadow duration-300;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFF6D6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E6A400;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B38000;
+}
